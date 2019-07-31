@@ -24,6 +24,11 @@ namespace BankAccount
         /// <returns></returns>
         public double Deposit(double amt)
         {
+            if (amt < 0)
+            {
+                throw new ArgumentException($"{nameof(amt)} cannot be negative");
+            }
+
             Balance += amt;
             return Balance;
         }
