@@ -59,6 +59,7 @@ namespace BankAccount.Tests
         }
 
         [TestMethod]
+        [TestCategory("Deposit")]
         public void Deposit_NegativeAmount_ThrowsArgumentException()
         {
             // Arrange
@@ -67,6 +68,57 @@ namespace BankAccount.Tests
 
             // Assert => Act
             Assert.ThrowsException<ArgumentException>(() => acc.Deposit(depositAmt));
+        }
+
+        [TestInitialize] // Run this method before EVERY unit test
+        public void InitTest()
+        {
+            acc = new Account();
+            acc.Owner = "Some Person";
+            acc.AccountNumber = "ABC123";
+        }
+
+        Account acc;
+
+        [TestMethod]
+        public void Withdraw_PositiveAmount_ReducecBalance()
+        {
+            double initialDeposit = 100;
+            double withdrawAmount = 10;
+            double expectedAmount = 90;
+
+            acc.Deposit(initialDeposit);
+            acc.Withdraw(withdrawAmount);
+
+            Assert.AreEqual(expectedAmount, acc.Balance);
+        }
+
+        [TestMethod]
+        [DataRow("123456")]
+        [DataRow("ABC123")]
+        [DataRow("A")]
+        [DataRow("999999999")]
+        public void AccoutNum_SetValidAcc_UpdateAccNum(string validAcc)
+        {
+            acc.AccountNumber = validAcc;
+
+            Assert.AreEqual(validAcc, acc.AccountNumber);
+        }
+
+        [TestMethod]
+        [DataRow("ABC#")]
+        [DataRow("#ABC")]
+        [DataRow("")]
+        [DataRow("       ")]
+        public void AccountNum_SetInvalidAcc_ThrowsArgumentException(string invalidAccount)
+        {
+            Assert.ThrowsException<ArgumentException>(() => acc.AccountNumber = invalidAccount);
+        }
+
+        [TestMethod]
+        public void AccountNum_SetToNull_ThrowsArgumentNullException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => acc.AccountNumber = null);
         }
     }
 }
